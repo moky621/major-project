@@ -1,15 +1,14 @@
-// Project Title
-// Your Name
-// Date
-//
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
-
+let ball, floor;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(80, 160);
+  world.gravity.y = 10;
+	
+  ball = new Sprite(40, 30, 50);
+
+  floor = new Sprite(40, 155, 80, 5, "static");
 }
 
 function draw() {
-  background(220);
+  clear();
 }
