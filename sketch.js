@@ -23,7 +23,7 @@ function draw() {
   clear();
   ufoMove();
   createWall();
-  checkCollide();
+  // checkCollide();
   
 }
 
@@ -48,7 +48,7 @@ function createWall(){
 }
 
 function checkCollide(){
-  if (ball.colliding(wall1)) {
+  if (ball.collides(wall1)) {
     ball.color = "red";
   }
   else {
