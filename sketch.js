@@ -9,7 +9,7 @@ function setup() {
   world.gravity.y = 10;
   ufo = new Sprite(width/2, 0, 175, 85);
   ufo.addImage("ufo.png");
-  ball = new Sprite(50, 50, 50);
+  ball = new Sprite(50, 50, 50, 50, "dynamic");
 
 
 
@@ -21,29 +21,44 @@ function setup() {
 
 function draw() {
   clear();
+  camera.on();
+  camera.x = ball.x;
+  camera.y = ball.y;
   ufoMove();
   createWall();
   // checkCollide();
+  if (ball.colliding(floor)) {
+    ball.color = "red";
+  }
+  else {
+    ball.color = "blue";
+  }
   
 }
 
 
 function ufoMove(){
-  if (kb.pressing('w')) {
-    ball.vel.y = -3;
+  if (kb.pressing("w")) {
+    ball.vel.y = - 3;
   }
 
-  if (kb.pressing('d')) {
-    ball.vel.x = 3;
+  if (kb.pressing("d")) {
+    ball.vel.x = 2;
+    if (ball.rotation <= 30){
+      ball.rotation += 3;
+    }
   }
   
-  if (kb.pressing('a')) {
+  if (kb.pressing("a")) {
     ball.vel.x = -3;
+    if (ball.rotation >= -30){
+      ball.rotation -= 2;
+    }
   }
 }
 
 function createWall(){
-  wall1 = new Sprite(150, 400, 23, 360, 'static');
+  wall1 = new Sprite(150, 400, 23, 360, "static");
   wall1.addImage("stonewall.png");
 }
 
