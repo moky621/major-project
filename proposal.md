@@ -1,13 +1,19 @@
 # Proposal
-
-put a disecription
+space themed game where the player controls a ship to avoid obstacles.
 
 ## Needs To Have List
-- thing 1
-- thing 2
+- ship, uses thrust and rotates
+- obstacles to avoid, maybe walls or maybe moving lasers
+- coins to collect
+- animation for thrust
+- sound effects
+
 
 
 ## Nice to Have List
 
-- tuhing
+- animation for ship getting damaged
+- ship can shoot back
+- upgrades after certain amount of coins
+- keep score
 
