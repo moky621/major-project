@@ -3,7 +3,13 @@ let ufoX, ufoY;
 let ufo;
 let ball;
 let wall1;
+let thrust;
+let coins;
 
+function preload() {
+  ufo = loadImage("ufo.png");
+  thrust = loadImage("rocket-thrust.gif")
+}
 function setup() {
   createCanvas(windowWidth, windowHeight);
   world.gravity.y = 10;
@@ -16,8 +22,19 @@ function setup() {
   floor = new Sprite(width/2, height-100, width, 5, "static");
 
   ufo = loadImage("ufo.png");
+  image(thrust, 300, 300);
+  
+  
+  createCoins();
+  
 }
-
+function createCoins() {
+  coins = new Group();
+  coins.color = 'yellow';
+  for (let i = 0; i<20; i++){
+    new coins.Sprite(i *100, 25, 10);
+  }
+}
 
 function draw() {
   clear();
@@ -26,13 +43,15 @@ function draw() {
   camera.y = ball.y;
   ufoMove();
   createWall();
-  // checkCollide();
+  checkCollide();
+  collectCoin()
   if (ball.colliding(floor)) {
     ball.color = "red";
   }
   else {
     ball.color = "blue";
   }
+  cameraToggle()
   
 }
 
@@ -60,6 +79,7 @@ function ufoMove(){
 function createWall(){
   wall1 = new Sprite(150, 400, 23, 360, "static");
   wall1.addImage("stonewall.png");
+  
 }
 
 function checkCollide(){
@@ -71,6 +91,12 @@ function checkCollide(){
   }
 }
 
+function collectCoin() {
+  if (ball.overlaps(coins)){
+    coins.remove();
+  }
+}
+
 function createUFO(x, y) {
   ufo = new Sprite(x, y);
   ufo.addImage(ufo);
@@ -78,6 +104,13 @@ function createUFO(x, y) {
   image(ufo, x, y);
 }
 
-function mousePressed() {
-  ufo.y += 100;
+function cameraToggle() {
+  if (key === 'c' && camera.on()) {
+    camera.off();
+  }
+  else if(key === 'c' && camera.off()) {
+    camera.on();
+    camera.x = ball.x;
+    camera.y = ball.y;
+  }
 }
