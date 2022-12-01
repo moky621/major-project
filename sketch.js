@@ -5,6 +5,8 @@ let ball;
 let wall1;
 let thrust;
 let coins;
+let score = 0;
+let scoreboard;
 
 function preload() {
   ufo = loadImage("ufo.png");
@@ -17,15 +19,18 @@ function setup() {
   ufo.addImage("ufo.png");
   ball = new Sprite(50, 50, 50, 50, "dynamic");
 
-
-
+  
+  
   floor = new Sprite(width/2, height-100, width, 5, "static");
-
+  
   ufo = loadImage("ufo.png");
   image(thrust, 300, 300);
   
   
   createCoins();
+  
+  displayScoreboard();
+  createWall();
   
 }
 function createCoins() {
@@ -42,19 +47,23 @@ function draw() {
   camera.x = ball.x;
   camera.y = ball.y;
   ufoMove();
-  createWall();
   checkCollide();
   collectCoin()
+  cameraToggle()
   if (ball.colliding(floor)) {
+    ball.color = "red";
+    score += 1;
+  }
+  else if (ball.collides(wall1)) {
     ball.color = "red";
   }
   else {
     ball.color = "blue";
   }
-  cameraToggle()
+  
+  
   
 }
-
 
 function ufoMove(){
   if (kb.pressing("w")) {
@@ -83,17 +92,26 @@ function createWall(){
 }
 
 function checkCollide(){
+  if (ball.colliding(floor)) {
+    ball.color = "red";
+    score += 1;
+  }
+  else {
+    ball.color = "blue";
+  }
   if (ball.collides(wall1)) {
     ball.color = "red";
   }
   else {
     ball.color = "blue";
   }
+  
 }
 
 function collectCoin() {
   if (ball.overlaps(coins)){
     coins.remove();
+    score += 1;
   }
 }
 
@@ -102,6 +120,8 @@ function createUFO(x, y) {
   ufo.addImage(ufo);
   
   image(ufo, x, y);
+  
+  
 }
 
 function cameraToggle() {
@@ -113,4 +133,12 @@ function cameraToggle() {
     camera.x = ball.x;
     camera.y = ball.y;
   }
+}
+
+function displayScoreboard() {
+  scoreboard = new Sprite(width/2, 100, 200, 75, 'static');
+  scoreboard.color = 'black';
+  scoreboard.text = str(score);
+  scoreboard.textColor = 'white';
+  scoreboard.textSize = 40;
 }
