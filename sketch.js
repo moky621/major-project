@@ -1,28 +1,36 @@
-let floor;
+let floor, ceiling;
 let ufoX, ufoY;
 let ufo;
-let ball;
 let wall1;
 let thrust;
 let coins;
 let score = 0;
 let scoreboard;
 let walls;
+let bg00, bg01, bg02, bg03;
+let space;
 
 function preload() {
   ufo = loadImage("ufo.png");
   thrust = loadImage("rocket-thrust.gif")
+  bg00 = loadImage("bg00.png");
+  bg01 = loadImage("bg01.png");
+  bg02 = loadImage("bg02.png");
+  bg03 = loadImage("bg03.png");
+  space = loadImage("space.png");
 }
 function setup() {
   createCanvas(windowWidth, windowHeight);
   world.gravity.y = 10;
-  ball = new Sprite(50, 50, 50, "dynamic");
-  
-  ball.addImage("ufo.png");
-
+  ufo = new Sprite(50, 50, 50, "dynamic");
   
   
-  floor = new Sprite(width/2, height-100, width, 5, "static");
+  ufo.addImage("ufo.png");
+  
+  
+  
+  floor = new Sprite(width/2, height, width, 5, "static");
+  ceiling = new Sprite(width/2, 0, width, 5, "static");
   
   image(thrust, 300, 300);
   
@@ -36,6 +44,7 @@ function setup() {
 
 function draw() {
   clear();
+  drawBg();
   // cameraMode();
   ufoMove();
   checkCollide();
@@ -46,45 +55,50 @@ function draw() {
   
   
   
-  if (ball.colliding(floor)) {
-    ball.color = "red";
+  if (ufo.colliding(floor)) {
+    ufo.color = "red";
   }
-  else if (ball.collides(walls)) {
-    ball.color = "red";
+  else if (ufo.collides(walls)) {
+    ufo.color = "red";
   }
   else {
-    ball.color = "blue";
+    ufo.color = "blue";
   }
   
   
   
   
 }
-
+function drawBg(){
+  image(space, 0, 0, width, height);
+  // image(bg02, 0, 0, width, height);
+  // image(bg01, 0, 0, width, height);
+  // image(bg00, 0, 0, width, height);
+}
 function ufoMove(){
   if (kb.pressing("w")) {
-    ball.vel.y = - 3;
+    ufo.vel.y = - 3;
   }
   
   if (kb.pressing("d")) {
-    ball.vel.x = 2;
-    if (ball.rotation <= 30){
-      ball.rotation += 3;
+    ufo.vel.x = 2;
+    if (ufo.rotation <= 30){
+      ufo.rotation += 3;
     }
   }
   
   if (kb.pressing("a")) {
-    ball.vel.x = -3;
-    if (ball.rotation >= -30){
-      ball.rotation -= 2;
+    ufo.vel.x = -3;
+    if (ufo.rotation >= -30){
+      ufo.rotation -= 2;
     }
   }
 }
 
 function cameraMode() {
   camera.on();
-  camera.x = ball.x;
-  camera.y = ball.y;
+  camera.x = ufo.x;
+  camera.y = ufo.y;
 }
 
 
@@ -109,23 +123,23 @@ function createWall(){
 }
 
 function checkCollide(){
-  if (ball.colliding(floor)) {
-    ball.color = "red";
+  if (ufo.colliding(floor)) {
+    ufo.color = "red";
     
   }
-  else if (ball.collides(walls)) {
-    ball.color = "red";
+  else if (ufo.collides(walls)) {
+    ufo.color = "red";
     
     
   }
   else {
-    ball.color = "blue";
+    ufo.color = "blue";
   }
   
 }
 
 function collectCoin() {
-  if (ball.overlaps(coins)){
+  if (ufo.overlaps(coins)){
     coins[0].remove();
     score += 5;
     displayScoreboard();
@@ -147,8 +161,8 @@ function cameraToggle() {
   }
   else if(key === 'c' && camera.off()) {
     camera.on();
-    camera.x = ball.x;
-    camera.y = ball.y;
+    camera.x = ufo.x;
+    camera.y = ufo.y;
   }
 }
 
