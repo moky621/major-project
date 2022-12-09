@@ -9,6 +9,7 @@ let scoreboard;
 let walls;
 let bg00, bg01, bg02, bg03;
 let space;
+let bang, money;
 
 function preload() {
   ufo = loadImage("ufo.png");
@@ -18,6 +19,8 @@ function preload() {
   bg02 = loadImage("bg02.png");
   bg03 = loadImage("bg03.png");
   space = loadImage("space.png");
+  bang = loadSound("bangsound.mp3");
+  money = loadSound("moneysound.mp3");
 }
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -26,9 +29,6 @@ function setup() {
   
   
   ufo.addImage("ufo.png");
-  
-  
-  
   floor = new Sprite(width/2, height, width, 5, "static");
   ceiling = new Sprite(width/2, 0, width, 5, "static");
   
@@ -55,15 +55,15 @@ function draw() {
   
   
   
-  if (ufo.colliding(floor)) {
-    ufo.color = "red";
-  }
-  else if (ufo.collides(walls)) {
-    ufo.color = "red";
-  }
-  else {
-    ufo.color = "blue";
-  }
+  // if (ufo.colliding(floor)) {
+  //   ufo.color = "red";
+  // }
+  // else if (ufo.collides(walls)) {
+  //   ufo.color = "red";
+  // }
+  // else {
+  //   ufo.color = "blue";
+  // }
   
   
   
@@ -105,7 +105,7 @@ function cameraMode() {
 function createCoins() {
   coins = new Group();
   coins.color = 'yellow';
-  for (let i = 0; i<20; i++){
+  for (let i = 0; i<200; i++){
     new coins.Sprite(i *100+50, height/2 - 50, 10, 'static');
   }
 }
@@ -114,7 +114,7 @@ function createCoins() {
 function createWall(){
   walls = new Group();
   walls.addImage("stonewall.png");
-  for (let i = 0; i<20; i++){
+  for (let i = 0; i<200; i++){
     new walls.Sprite(i *100, 100, 23, 360, 'static');
     new walls.Sprite(i *100, random(height-100, height-250), 23, 360, 'static');
   }
@@ -129,8 +129,7 @@ function checkCollide(){
   }
   else if (ufo.collides(walls)) {
     ufo.color = "red";
-    
-    
+    bang.play();
   }
   else {
     ufo.color = "blue";
@@ -143,6 +142,7 @@ function collectCoin() {
     coins[0].remove();
     score += 5;
     displayScoreboard();
+    money.play();
   }
 }
 
@@ -167,7 +167,7 @@ function cameraToggle() {
 }
 
 function displayScoreboard() {
-  scoreboard = new Sprite(width/2, 100, 200, 75, 'static');
+  scoreboard = new Sprite(width/2, 100, 300, 75, 'static');
   scoreboard.color = 'black';
   scoreboard.text = str(score);
   scoreboard.textColor = 'white';
