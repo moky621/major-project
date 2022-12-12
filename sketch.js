@@ -10,36 +10,34 @@ let walls;
 let bg00, bg01, bg02, bg03;
 let space;
 let bang, money;
+let asteroid, asteroidImg, asteroidsound;
 
 function preload() {
-  ufo = loadImage("ufo.png");
-  thrust = loadImage("rocket-thrust.gif")
-  bg00 = loadImage("bg00.png");
-  bg01 = loadImage("bg01.png");
-  bg02 = loadImage("bg02.png");
-  bg03 = loadImage("bg03.png");
-  space = loadImage("space.png");
-  bang = loadSound("bangsound.mp3");
-  money = loadSound("moneysound.mp3");
+  ufo = loadImage("assets/ufo.png");
+  thrust = loadImage("assets/rocket-thrust.gif")
+  bg00 = loadImage("assets/bg00.png");
+  bg01 = loadImage("assets/bg01.png");
+  bg02 = loadImage("assets/bg02.png");
+  bg03 = loadImage("assets/bg03.png");
+  space = loadImage("assets/space.png");
+  bang = loadSound("assets/bangsound.mp3");
+  money = loadSound("assets/moneysound.mp3");
+  asteroidImg = loadImage("assets/asteroidstuff/asteroid.png");
+  asteroidsound = loadSound("assets/asteroidsound.mp3");
 }
 function setup() {
   createCanvas(windowWidth, windowHeight);
   world.gravity.y = 10;
   ufo = new Sprite(50, 50, 50, "dynamic");
-  
-  
-  ufo.addImage("ufo.png");
+  ufo.addImage("assets/ufo.png");
   floor = new Sprite(width/2, height, width, 5, "static");
   ceiling = new Sprite(width/2, 0, width, 5, "static");
   
   image(thrust, 300, 300);
-  
-  
   createCoins();
-  
   displayScoreboard();
   createWall();
-  
+  createAsteroid(100+width, height/2 -100, 10);
 }
 
 function draw() {
@@ -51,22 +49,6 @@ function draw() {
   collectCoin();
   cameraToggle();
   updateScore();
-
-  
-  
-  
-  // if (ufo.colliding(floor)) {
-  //   ufo.color = "red";
-  // }
-  // else if (ufo.collides(walls)) {
-  //   ufo.color = "red";
-  // }
-  // else {
-  //   ufo.color = "blue";
-  // }
-  
-  
-  
   
 }
 function drawBg(){
@@ -75,6 +57,29 @@ function drawBg(){
   // image(bg01, 0, 0, width, height);
   // image(bg00, 0, 0, width, height);
 }
+
+function spawnNewAsteroid(){
+  if (score % 10 === 5) {
+    createAsteroid(100 + width, height/2 -100, 10);
+    asteroid.vel.x -= 0.1;
+    asteroid.vel.y = 0;
+    asteroidsound.play();
+    if (asteroid.overlaps(walls)){
+      asteroid.x -= 10;
+    }
+    
+  }
+}
+
+
+
+function createAsteroid(x, y, size) {
+  asteroid = new Sprite(x, y, size);
+  asteroid.addImage(asteroidImg);
+  asteroid.gravity = 0;
+}
+
+
 function ufoMove(){
   if (kb.pressing("w")) {
     ufo.vel.y = - 3;
@@ -93,6 +98,8 @@ function ufoMove(){
       ufo.rotation -= 2;
     }
   }
+  asteroid.vel.x -= 0.1;
+  asteroid.vel.y = 0;
 }
 
 function cameraMode() {
@@ -113,7 +120,7 @@ function createCoins() {
 
 function createWall(){
   walls = new Group();
-  walls.addImage("stonewall.png");
+  walls.addImage("assets/stonewall.png");
   for (let i = 0; i<200; i++){
     new walls.Sprite(i *100, 100, 23, 360, 'static');
     new walls.Sprite(i *100, random(height-100, height-250), 23, 360, 'static');
@@ -134,7 +141,12 @@ function checkCollide(){
   else {
     ufo.color = "blue";
   }
-  
+  if (asteroid.overlaps(walls)){
+    asteroid.x -= 10;
+  }
+  if (asteroid.collides(ufo)) {
+    bang.play();
+  }
 }
 
 function collectCoin() {
@@ -143,6 +155,7 @@ function collectCoin() {
     score += 5;
     displayScoreboard();
     money.play();
+    spawnNewAsteroid();
   }
 }
 
