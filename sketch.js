@@ -11,6 +11,7 @@ let bg00, bg01, bg02, bg03;
 let space;
 let bang, money;
 let asteroid, asteroidImg, asteroidsound;
+let explosionAni;
 
 function preload() {
   ufo = loadImage("assets/ufo.png");
@@ -24,7 +25,11 @@ function preload() {
   money = loadSound("assets/moneysound.mp3");
   asteroidImg = loadImage("assets/asteroidstuff/asteroid.png");
   asteroidsound = loadSound("assets/asteroidsound.mp3");
+  // explosionAni = loadAnimation("assets/asteroidstuff/explosion.png", { frameSize: [2176/17, 2176/17], frames: 17 });
 }
+
+
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   world.gravity.y = 10;
@@ -137,6 +142,7 @@ function checkCollide(){
   else if (ufo.collides(walls)) {
     ufo.color = "red";
     bang.play();
+    animation(explosionAni, ufo.x, ufo.y);
   }
   else {
     ufo.color = "blue";
