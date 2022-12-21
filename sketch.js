@@ -48,7 +48,7 @@ function setup() {
 function draw() {
   clear();
   drawBg();
-  // cameraMode();
+  cameraMode();
   ufoMove();
   checkCollide();
   collectCoin();
