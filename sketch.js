@@ -11,7 +11,7 @@ let bg00, bg01, bg02, bg03;
 let space;
 let bang, money;
 let asteroid, asteroidImg, asteroidsound;
-let explosionAni;
+let explosionAni, fireballAni;
 
 function preload() {
   ufo = loadImage("assets/ufo.png");
@@ -26,6 +26,8 @@ function preload() {
   asteroidImg = loadImage("assets/asteroidstuff/asteroid.png");
   asteroidsound = loadSound("assets/asteroidsound.mp3");
   // explosionAni = loadAnimation("assets/asteroidstuff/explosion.png", { frameSize: [2176/17, 2176/17], frames: 17 });
+  fireballAni = loadAnimation("assets/asteroidstuff/fireballsheet1.png", {frameSize: [500/2, 153/2], frames: 4});
+  fireballAni.frameDelay = 8;
 }
 
 
@@ -48,7 +50,7 @@ function setup() {
 function draw() {
   clear();
   drawBg();
-  cameraMode();
+  // cameraMode();
   ufoMove();
   checkCollide();
   collectCoin();
@@ -65,22 +67,22 @@ function drawBg(){
 
 function spawnNewAsteroid(){
   if (score % 10 === 5) {
-    createAsteroid(100 + width, height/2 -100, 10);
+    createAsteroid(100 + width, height/2 -100, 50);
     asteroid.vel.x -= 0.1;
     asteroid.vel.y = 0;
     asteroidsound.play();
     if (asteroid.overlaps(walls)){
-      asteroid.x -= 10;
+      asteroid.x -= 12;
     }
     
   }
 }
 
 
-
 function createAsteroid(x, y, size) {
   asteroid = new Sprite(x, y, size);
   asteroid.addImage(asteroidImg);
+  asteroid.addAni(fireballAni);
   asteroid.gravity = 0;
 }
 
@@ -142,7 +144,7 @@ function checkCollide(){
   else if (ufo.collides(walls)) {
     ufo.color = "red";
     bang.play();
-    animation(explosionAni, ufo.x, ufo.y);
+    // animation(explosionAni, 500, 500);
   }
   else {
     ufo.color = "blue";
