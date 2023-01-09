@@ -67,7 +67,7 @@ function drawBg(){
 
 function spawnNewAsteroid(){
   if (score % 10 === 5) {
-    createAsteroid(100 + width, height/2 -100, 50);
+    createAsteroid(100 + width, height/2 -105, 40);
     asteroid.vel.x -= 0.1;
     asteroid.vel.y = 0;
     asteroidsound.play();
@@ -150,7 +150,7 @@ function checkCollide(){
     ufo.color = "blue";
   }
   if (asteroid.overlaps(walls)){
-    asteroid.x -= 10;
+    asteroid.x -= 20;
   }
   if (asteroid.collides(ufo)) {
     bang.play();
