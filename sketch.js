@@ -25,7 +25,7 @@ function preload() {
   money = loadSound("assets/moneysound.mp3");
   asteroidImg = loadImage("assets/asteroidstuff/asteroid.png");
   asteroidsound = loadSound("assets/asteroidsound.mp3");
-  // explosionAni = loadAnimation("assets/asteroidstuff/explosion.png", { frameSize: [2176/17, 2176/17], frames: 17 });
+  explosionAni = loadAnimation("assets/asteroidstuff/explosion.png", { frameSize: [2176/17, 2176/17], frames: 17 });
   fireballAni = loadAnimation("assets/asteroidstuff/fireballsheet1.png", {frameSize: [500/2, 153/2], frames: 4});
   fireballAni.frameDelay = 8;
 }
@@ -56,6 +56,8 @@ function draw() {
   collectCoin();
   cameraToggle();
   updateScore();
+  // getRidOf();
+  // drawAnimation();
   
 }
 function drawBg(){
@@ -67,12 +69,12 @@ function drawBg(){
 
 function spawnNewAsteroid(){
   if (score % 10 === 5) {
-    createAsteroid(100 + width, height/2 -105, 40);
+    createAsteroid(width + ufo.x, height/2 - 100, 70);
     asteroid.vel.x -= 0.1;
     asteroid.vel.y = 0;
     asteroidsound.play();
     if (asteroid.overlaps(walls)){
-      asteroid.x -= 12;
+      asteroid.x -= 10;
     }
     
   }
@@ -81,8 +83,8 @@ function spawnNewAsteroid(){
 
 function createAsteroid(x, y, size) {
   asteroid = new Sprite(x, y, size);
+  // asteroid.addAni(fireballAni);
   asteroid.addImage(asteroidImg);
-  asteroid.addAni(fireballAni);
   asteroid.gravity = 0;
 }
 
@@ -120,7 +122,7 @@ function createCoins() {
   coins = new Group();
   coins.color = 'yellow';
   for (let i = 0; i<200; i++){
-    new coins.Sprite(i *100+50, height/2 - 50, 10, 'static');
+    new coins.Sprite(i *100+50, height/2 -25, 10, 'static');
   }
 }
 
@@ -129,8 +131,9 @@ function createWall(){
   walls = new Group();
   walls.addImage("assets/stonewall.png");
   for (let i = 0; i<200; i++){
-    new walls.Sprite(i *100, 100, 23, 360, 'static');
-    new walls.Sprite(i *100, random(height-100, height-250), 23, 360, 'static');
+    // new walls.Sprite(i *100, 100, 23, 360, 'static');
+    new walls.Sprite(i *100, random(height-100, height-200), 23, 360, 'static');
+    new walls.Sprite(i *100, random(100, 150), 23, 360, 'static');
   }
   walls.layer = 2;
   
@@ -138,13 +141,13 @@ function createWall(){
 
 function checkCollide(){
   if (ufo.colliding(floor)) {
-    ufo.color = "red";
+    bang.play();
     
   }
   else if (ufo.collides(walls)) {
-    ufo.color = "red";
+    
     bang.play();
-    // animation(explosionAni, 500, 500);
+    drawAnimation();
   }
   else {
     ufo.color = "blue";
@@ -154,6 +157,17 @@ function checkCollide(){
   }
   if (asteroid.collides(ufo)) {
     bang.play();
+  }
+}
+
+function drawAnimation() {
+  animation(explosionAni, ufo.x, ufo.y);
+  
+}
+
+function getRidOf() {
+  if (asteroid.x < -100) {
+    sprite.delete;
   }
 }
 
