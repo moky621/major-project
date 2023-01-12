@@ -24,6 +24,7 @@ function preload() {
   bg02 = loadImage("assets/bg02.png");
   bg03 = loadImage("assets/bg03.png");
   space = loadImage("assets/space.png");
+  gameOver = loadImage("assets/gameover.png")
   bang = loadSound("assets/bangsound.mp3");
   money = loadSound("assets/moneysound.mp3");
   asteroidImg = loadImage("assets/asteroidstuff/asteroid.png");
@@ -40,8 +41,8 @@ function setup() {
   world.gravity.y = 10;
   ufo = new Sprite(50, 50, 40, "dynamic");
   ufo.addImage("assets/ufo.png");
-  floor = new Sprite(width/2, height, width, 5, "static");
-  ceiling = new Sprite(width/2, 0, width, 5, "static");
+  floor = new Sprite(width, height, width*10, 5, "static");
+  ceiling = new Sprite(width, 0, width*10, 5, "static");
   scoreboard = new Sprite(ufo.x, 100, 300, 75, 'dynamic');
   
   image(thrust, 300, 300);
@@ -49,7 +50,7 @@ function setup() {
   displayScoreboard();
   createWall();
   
-  createAsteroid(100+width, height/2 -100, 10);
+  createAsteroidFixed(100+width, height/2 -100, 10);
 }
 
 function draw() {
@@ -66,6 +67,7 @@ function draw() {
   checkCollide();
   blows();
   // endGame();
+ 
 }
 function drawBg(){
   image(space, 0, 0, width, height);
@@ -75,12 +77,13 @@ function drawBg(){
 }
 
 function spawnNewAsteroid(){
-  if (score % 10 === 5) {
+  if (score % 15 === 0) {
     // createAsteroidFixed(width + ufo.x, height/2 - 100, 70);
     asteroid = new Sprite(width + ufo.x, height/2 - 100, 70);
-    asteroid.vel.x -= 0.1;
-    asteroid.vel.y = 0;
+    asteroid.vel.x -= 0.2;
+    asteroid.vel.y = -1;
     asteroidsound.play();
+    asteroid.addImage(asteroidImg);
     if (asteroid.overlaps(walls)){
       asteroid.x -= 10;
     }
@@ -88,19 +91,8 @@ function spawnNewAsteroid(){
   }
 }
 
-
-function createAsteroid(x, y, size) {
-  asteroid = new Sprite(x, y, size);
-  // asteroid.addAni(fireballAni);
-  asteroid.addImage(asteroidImg);
-  asteroid.gravity = 0;
-  
-}
-
 function createAsteroidFixed(x, y, size) {
   asteroid = new Group();
-  asteroid.addImage(asteroidImg);
-  
   asteroid.x = x;
   asteroid.y = y;
   asteroid.size = size;
@@ -166,7 +158,7 @@ function checkCollide(){
   else if (ufo.collided(walls)) {
     bang.play();
     hitCount++;
-    // state = "blows";
+    state = "blows";
   }
   else {
     ufo.color = "blue";
@@ -176,19 +168,21 @@ function checkCollide(){
   }
   if (asteroid.collides(ufo)) {
     bang.play();
-    // state = "blows";
+    state = "blows";
     hitCount++;
   }
 }
 
 function drawAnimation() {
-  animation(explosionAni, ufo.x, ufo.y);
+  animation(explosionAni, ufo.x, ufo.y, 3, 3, 3);
+  animation(fireballAni, asteroid.x, asteroid.y);
+  asteroid.visible = false;
   ufo.visible = false;
   
 }
 
 function blows(){
-  if (state === "blows" && hitCount >= 3) {
+  if (state === "blows") {
     drawAnimation();
     scoreboard.text = "YOU DIED";
 
@@ -199,7 +193,7 @@ function blows(){
 
 function endGame() {
   if (state === "dead") {
-    alert("u died");
+    image(gameOver, width, height, width, height);
   }
 }
 
