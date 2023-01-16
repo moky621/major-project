@@ -1,4 +1,4 @@
-let floor, ceiling;
+let floor, ceiling, barrier;
 let ufoX, ufoY;
 let ufo;
 let wall1;
@@ -14,6 +14,8 @@ let asteroid, asteroidImg, asteroidsound;
 let explosionAni, fireballAni;
 let state = "life";
 let hitCount = 0;
+let gameOverSound;
+let instructions;
 
 
 function preload() {
@@ -27,6 +29,7 @@ function preload() {
   gameOver = loadImage("assets/gameover.png")
   bang = loadSound("assets/bangsound.mp3");
   money = loadSound("assets/moneysound.mp3");
+  gameOverSound = loadSound("assets/gameOverSound.mp3");
   asteroidImg = loadImage("assets/asteroidstuff/asteroid.png");
   asteroidsound = loadSound("assets/asteroidsound.mp3");
   explosionAni = loadAnimation("assets/asteroidstuff/explosion.png", { frameSize: [2176/17, 2176/17], frames: 17 });
@@ -44,6 +47,8 @@ function setup() {
   floor = new Sprite(width, height, width*10, 5, "static");
   ceiling = new Sprite(width, 0, width*10, 5, "static");
   scoreboard = new Sprite(ufo.x, 100, 300, 75, 'dynamic');
+  barrier = new Sprite(-100, height/2, 5, height, "static");
+  drawInstructions();
   
   image(thrust, 300, 300);
   createCoins();
@@ -62,7 +67,7 @@ function draw() {
   collectCoin();
   cameraToggle();
   updateScore();
-  // getRidOf();
+  getRidOf();
   // drawAnimation();
   checkCollide();
   blows();
@@ -76,6 +81,24 @@ function drawBg(){
   // image(bg00, 0, 0, width, height);
 }
 
+function drawInstructions() {
+  // instructions = new Sprite (-400, height/2 +100, 500, 300, "static");
+  // instructions.color = "black";
+  textSize(20);
+  textWrap(WORD);
+  text("INSTRUCTIONS \
+  // WASD TO MOVE UFO\
+  // COLLECT COINS AND AVOID ASTEROIDS\
+  // CLICK MOUSE TO RESTART IF YOU DIE", 0, height/2, 100);
+
+  // instructions.text = "INSTRUCTIONS \
+  // WASD TO MOVE UFO\
+  // COLLECT COINS AND AVOID ASTEROIDS\
+  // CLICK MOUSE TO RESTART IF YOU DIE";
+  // instructions.textSize = 15;
+  // instructions.textColor = "white";
+  
+}
 function spawnNewAsteroid(){
   if (score % 15 === 0) {
     // createAsteroidFixed(width + ufo.x, height/2 - 100, 70);
@@ -100,25 +123,27 @@ function createAsteroidFixed(x, y, size) {
 }
 
 function ufoMove(){
-  if (kb.pressing("w")) {
-    ufo.vel.y = - 3;
-  }
-  
-  if (kb.pressing("d")) {
-    ufo.vel.x = 2;
-    if (ufo.rotation <= 30){
-      ufo.rotation += 3;
+  if (state === "life"){
+    if (kb.pressing("w")) {
+      ufo.vel.y = - 3;
     }
-  }
-  
-  if (kb.pressing("a")) {
-    ufo.vel.x = -3;
-    if (ufo.rotation >= -30){
-      ufo.rotation -= 2;
+
+    if (kb.pressing("d")) {
+      ufo.vel.x = 2;
+      if (ufo.rotation <= 30){
+        ufo.rotation += 3;
+      }
     }
+
+    if (kb.pressing("a")) {
+      ufo.vel.x = -3;
+      if (ufo.rotation >= -30){
+        ufo.rotation -= 2;
+      }
+    }
+    asteroid.vel.x -= 0.1;
+    asteroid.vel.y = 0;
   }
-  asteroid.vel.x -= 0.1;
-  asteroid.vel.y = 0;
 }
 
 function cameraMode() {
@@ -185,22 +210,32 @@ function blows(){
   if (state === "blows") {
     drawAnimation();
     scoreboard.text = "YOU DIED";
+    const myTimeout = setTimeout(endGame(), 5000);
+    myTimeout;
 
   }
-  
-  // state = "dead";
 }
 
 function endGame() {
-  if (state === "dead") {
-    image(gameOver, width, height, width, height);
+  if (ufo.colliding(floor)){
+    world.gravity.y = 1000;
+    walls.visible = false;
+    barrier.visible = false;
+    ceiling.visible = false;
+    floor.visible = false;
+    animation(fireballAni, ufo.x + 2000, height/2);
+    imageMode(CENTER);
+    image(gameOver, ufo.x, ufo.y, width, height);
+    gameOverSound.play();
+    noLoop();
   }
+  
 }
 
 
 function getRidOf() {
-  if (asteroid.x < -100) {
-    sprite.delete;
+  if (asteroid.collides(barrier)) {
+    asteroid.visible = false;
   }
 }
 
@@ -241,6 +276,7 @@ function displayScoreboard() {
   scoreboard.textSize = 40;
   scoreboard.layer = 3;
   ufo.overlaps(scoreboard);
+  barrier.overlaps(scoreboard);
   scoreboard.y = height * 0.2;
   scoreboard.x = ufo.x;
   // scoreboard.vel.y = 0;
@@ -256,4 +292,10 @@ function updateScore() {
   
   displayScoreboard();
   
+}
+
+function mousePressed(){
+  if (state === "blows"){
+    location.reload();
+  }
 }
