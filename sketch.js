@@ -16,6 +16,9 @@ let state = "life";
 let hitCount = 0;
 let gameOverSound;
 let instructions;
+let coinImg;
+let gameOver;
+let thrustAni;
 
 
 function preload() {
@@ -26,6 +29,7 @@ function preload() {
   bg02 = loadImage("assets/bg02.png");
   bg03 = loadImage("assets/bg03.png");
   space = loadImage("assets/space.png");
+  coinImg = loadImage("assets/coin.png");
   gameOver = loadImage("assets/gameover.png")
   bang = loadSound("assets/bangsound.mp3");
   money = loadSound("assets/moneysound.mp3");
@@ -34,6 +38,7 @@ function preload() {
   asteroidsound = loadSound("assets/asteroidsound.mp3");
   explosionAni = loadAnimation("assets/asteroidstuff/explosion.png", { frameSize: [2176/17, 2176/17], frames: 17 });
   fireballAni = loadAnimation("assets/asteroidstuff/fireballsheet1.png", {frameSize: [500/2, 153/2], frames: 4});
+  thrustAni = loadAnimation("assets/thrustsheet.png" , {frameSize: [87, 158 ], frames: 8} );
   fireballAni.frameDelay = 8;
 }
 
@@ -72,6 +77,7 @@ function draw() {
   checkCollide();
   blows();
   // endGame();
+  reload();
  
 }
 function drawBg(){
@@ -103,15 +109,22 @@ function spawnNewAsteroid(){
   if (score % 15 === 0) {
     // createAsteroidFixed(width + ufo.x, height/2 - 100, 70);
     asteroid = new Sprite(width + ufo.x, height/2 - 100, 70);
+    asteroid.visible = true;
     asteroid.vel.x -= 0.2;
     asteroid.vel.y = -1;
     asteroidsound.play();
+    asteroidAnimation();
     asteroid.addImage(asteroidImg);
     if (asteroid.overlaps(walls)){
       asteroid.x -= 10;
     }
     asteroid.overlaps(coins);
   }
+
+  if (score > 100) {
+    asteroid.vel.x -= 1;
+  }
+  
 }
 
 function createAsteroidFixed(x, y, size) {
@@ -120,12 +133,14 @@ function createAsteroidFixed(x, y, size) {
   asteroid.y = y;
   asteroid.size = size;
   asteroid.overlaps(coins);
+  
 }
 
 function ufoMove(){
   if (state === "life"){
     if (kb.pressing("w")) {
       ufo.vel.y = - 3;
+      animation(thrustAni, ufo.x- 10, ufo.y+50);
     }
 
     if (kb.pressing("d")) {
@@ -155,6 +170,7 @@ function cameraMode() {
 
 function createCoins() {
   coins = new Group();
+  coins.addImage(coinImg);
   coins.color = 'yellow';
   for (let i = 0; i<200; i++){
     new coins.Sprite(i *100+50, height/2 -25, 10, 'static');
@@ -206,6 +222,12 @@ function drawAnimation() {
   
 }
 
+function asteroidAnimation() {
+  animation(fireballAni, asteroid.x, asteroid.y);
+  asteroid.addAni(fireballAni);
+  asteroid.ani = fireballAni
+}
+
 function blows(){
   if (state === "blows") {
     drawAnimation();
@@ -223,6 +245,7 @@ function endGame() {
     barrier.visible = false;
     ceiling.visible = false;
     floor.visible = false;
+    asteroid.delete;
     animation(fireballAni, ufo.x + 2000, height/2);
     imageMode(CENTER);
     image(gameOver, ufo.x, ufo.y, width, height);
@@ -234,7 +257,7 @@ function endGame() {
 
 
 function getRidOf() {
-  if (asteroid.collides(barrier)) {
+  if (asteroid.collides(barrier) || asteroid.collides(floor)) {
     asteroid.visible = false;
   }
 }
@@ -294,8 +317,9 @@ function updateScore() {
   
 }
 
-function mousePressed(){
-  if (state === "blows"){
+function reload(){
+  if (state === "blows" && kb.pressing("r") ){
     location.reload();
+    
   }
 }
