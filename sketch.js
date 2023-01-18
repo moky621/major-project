@@ -19,6 +19,8 @@ let instructions;
 let coinImg;
 let gameOver;
 let thrustAni;
+let thrustSound, thrusting;
+
 
 
 function preload() {
@@ -33,6 +35,8 @@ function preload() {
   gameOver = loadImage("assets/gameover.png")
   bang = loadSound("assets/bangsound.mp3");
   money = loadSound("assets/moneysound.mp3");
+  thrustSound = loadSound("assets/thrustsound.mp3");
+  thrusting = loadSound("assets/thrusting.mp3");
   gameOverSound = loadSound("assets/gameOverSound.mp3");
   asteroidImg = loadImage("assets/asteroidstuff/asteroid.png");
   asteroidsound = loadSound("assets/asteroidsound.mp3");
@@ -140,7 +144,11 @@ function ufoMove(){
   if (state === "life"){
     if (kb.pressing("w")) {
       ufo.vel.y = - 3;
-      animation(thrustAni, ufo.x- 10, ufo.y+50);
+      animation(thrustAni, ufo.x- 7, ufo.y+40, 0.75, 0.75, 0.75);
+      
+      if (!thrustSound.isPlaying()){
+        thrustSound.play();
+      }
     }
 
     if (kb.pressing("d")) {
@@ -245,6 +253,7 @@ function endGame() {
     barrier.visible = false;
     ceiling.visible = false;
     floor.visible = false;
+    coins.visible = false;
     asteroid.delete;
     animation(fireballAni, ufo.x + 2000, height/2);
     imageMode(CENTER);
@@ -321,5 +330,11 @@ function reload(){
   if (state === "blows" && kb.pressing("r") ){
     location.reload();
     
+  }
+}
+
+function mousePressed() {
+  if (state === "blows") {
+    location.reload();
   }
 }
