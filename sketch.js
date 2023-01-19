@@ -1,3 +1,9 @@
+// dodgeUFO
+
+// Abdel Malek Etagiuri
+// Jan 24, 2023
+
+// let statements
 let floor, ceiling, barrier;
 let ufoX, ufoY;
 let ufo;
@@ -22,7 +28,7 @@ let thrustAni;
 let thrustSound, thrusting;
 
 
-
+// preloading images, sound, animations
 function preload() {
   ufo = loadImage("assets/ufo.png");
   thrust = loadImage("assets/rocket-thrust.gif")
@@ -47,7 +53,7 @@ function preload() {
 }
 
 
-
+// creating canvas and some sprites
 function setup() {
   createCanvas(windowWidth, windowHeight);
   world.gravity.y = 10;
@@ -67,30 +73,28 @@ function setup() {
   createAsteroidFixed(100+width, height/2 -100, 10);
 }
 
+// draw loop
 function draw() {
   clear();
   drawBg();
   cameraMode();
-  ufoMove();
-  
+  ufoMove(); 
   collectCoin();
   cameraToggle();
-  updateScore();
+  displayScoreboard();
   getRidOf();
-  // drawAnimation();
   checkCollide();
   blows();
-  // endGame();
   reload();
  
 }
+
+// background image
 function drawBg(){
   image(space, 0, 0, width, height);
-  // image(bg02, 0, 0, width, height);
-  // image(bg01, 0, 0, width, height);
-  // image(bg00, 0, 0, width, height);
 }
 
+// instructions function
 function drawInstructions() {
   // instructions = new Sprite (-400, height/2 +100, 500, 300, "static");
   // instructions.color = "black";
@@ -109,6 +113,8 @@ function drawInstructions() {
   // instructions.textColor = "white";
   
 }
+
+// spawn new asteroids in the game
 function spawnNewAsteroid(){
   if (score % 15 === 0) {
     // createAsteroidFixed(width + ufo.x, height/2 - 100, 70);
@@ -131,6 +137,7 @@ function spawnNewAsteroid(){
   
 }
 
+// function that creates the asteroids
 function createAsteroidFixed(x, y, size) {
   asteroid = new Group();
   asteroid.x = x;
@@ -140,6 +147,7 @@ function createAsteroidFixed(x, y, size) {
   
 }
 
+// WASD movements for ufo
 function ufoMove(){
   if (state === "life"){
     if (kb.pressing("w")) {
@@ -169,13 +177,14 @@ function ufoMove(){
   }
 }
 
+// camera function
 function cameraMode() {
   camera.on();
   camera.x = ufo.x;
   camera.y = ufo.y;
 }
 
-
+// create coins
 function createCoins() {
   coins = new Group();
   coins.addImage(coinImg);
@@ -185,7 +194,7 @@ function createCoins() {
   }
 }
 
-
+// create wall function
 function createWall(){
   walls = new Group();
   walls.addImage("assets/stonewall.png");
@@ -199,6 +208,7 @@ function createWall(){
   
 }
 
+// checks collides for asteroid, ufo, and wall
 function checkCollide(){
   if (ufo.colliding(floor)) {
     // bang.play();
@@ -222,6 +232,7 @@ function checkCollide(){
   }
 }
 
+// draws explosion animations for asteroid and ufo
 function drawAnimation() {
   animation(explosionAni, ufo.x, ufo.y, 3, 3, 3);
   animation(fireballAni, asteroid.x, asteroid.y);
@@ -230,12 +241,14 @@ function drawAnimation() {
   
 }
 
+// add animation to asteroid
 function asteroidAnimation() {
   animation(fireballAni, asteroid.x, asteroid.y);
   asteroid.addAni(fireballAni);
   asteroid.ani = fireballAni
 }
 
+// function runs when ufo dies. basically game over function
 function blows(){
   if (state === "blows") {
     drawAnimation();
@@ -246,6 +259,7 @@ function blows(){
   }
 }
 
+// officially ends the game, makes sprites invisible and displays gameover image.
 function endGame() {
   if (ufo.colliding(floor)){
     world.gravity.y = 1000;
@@ -264,13 +278,14 @@ function endGame() {
   
 }
 
-
+// makes old asteroids disappear
 function getRidOf() {
   if (asteroid.collides(barrier) || asteroid.collides(floor)) {
     asteroid.visible = false;
   }
 }
 
+// ufo collects coins
 function collectCoin() {
   if (ufo.overlaps(coins)){
     coins[0].remove();
@@ -281,6 +296,7 @@ function collectCoin() {
   }
 }
 
+// creates ufo
 function createUFO(x, y) {
   ufo = new Sprite(x, y);
   ufo.addImage(ufo);
@@ -290,6 +306,7 @@ function createUFO(x, y) {
   
 }
 
+// toggles camera on and off.. doesnt work
 function cameraToggle() {
   if (key === 'c' && camera.on()) {
     camera.off();
@@ -301,6 +318,7 @@ function cameraToggle() {
   }
 }
 
+// displays the scoreboard
 function displayScoreboard() {
   scoreboard.color = 'black';
   scoreboard.text = str(score);
@@ -311,21 +329,10 @@ function displayScoreboard() {
   barrier.overlaps(scoreboard);
   scoreboard.y = height * 0.2;
   scoreboard.x = ufo.x;
-  // scoreboard.vel.y = 0;
-  // fill("white");
-  // textSize(60);
-  // text("Score: " + score, ufo.x, height*0.2);
-  // text.layer = 3;
-  // textAlign(CENTER);
   
 }
 
-function updateScore() {
-  
-  displayScoreboard();
-  
-}
-
+// reloads page when dead
 function reload(){
   if (state === "blows" && kb.pressing("r") ){
     location.reload();
@@ -333,6 +340,7 @@ function reload(){
   }
 }
 
+// reloads game when dead
 function mousePressed() {
   if (state === "blows") {
     location.reload();
